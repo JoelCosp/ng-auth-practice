@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User"); // Asegúrate de importar el modelo de usuario
 const router = express.Router();
+const { protect } = require("../middleware/authMiddleware");
 
 // Ruta para registrar un nuevo usuario
 router.post("/register", async (req, res) => {
@@ -62,5 +63,12 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ message: "Error al hacer login." });
   }
 });
+
+// Ruta protegida que solo pueden acceder los usuarios autenticados
+router.get("/profile", protect, (req, res) => {
+  // Si llegamos hasta aquí, significa que el usuario está autenticado
+  res.json({ message: "Acceso a perfil permitido", userId: req.user });
+});
+
 
 module.exports = router;
